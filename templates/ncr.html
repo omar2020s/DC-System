@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}NCR Log{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <a class="btn btn-success" href="/export/ncr">Export Excel</a>
+  <form class="d-flex" method="get">
+    <input class="form-control me-2" name="q" value="{{ q or '' }}" placeholder="Search NCR No / Description / Location / Status">
+    <button class="btn btn-outline-primary">Search</button>
+    {% if q %}<a class="btn btn-outline-secondary ms-2" href="/ncr">Clear</a>{% endif %}
+  </form>
+</div>
+<div class="card p-3 mb-3">
+  <form method="post">
+    <div class="row g-2">
+      <div class="col-md"><input class="form-control" name="ncr_no" placeholder="NCR No" required></div>
+      <div class="col-md"><input class="form-control" name="location" placeholder="Location"></div>
+      <div class="col-md"><select class="form-select" name="status"><option>Open</option><option>Under Corrective Action</option><option>Closed</option></select></div>
+    </div>
+    <textarea class="form-control mt-2" name="description" placeholder="Description" required></textarea>
+    <textarea class="form-control mt-2" name="root_cause" placeholder="Root Cause"></textarea>
+    <textarea class="form-control mt-2" name="corrective_action" placeholder="Corrective Action"></textarea>
+    <input class="form-control mt-2" name="signed_file_link" placeholder="Hyperlink for signed NCR file after closure/signature">
+    <button class="btn btn-primary mt-2">Add NCR</button>
+  </form>
+</div>
+<div class="card"><table class="table table-hover mb-0">
+<tr><th>NCR No</th><th>Description</th><th>Location</th><th>Status</th><th>Root Cause</th><th>Corrective Action</th><th>Signed File</th><th>Action</th></tr>
+{% for i in items %}<tr>
+<td>{{i.ncr_no}}</td><td>{{i.description}}</td><td>{{i.location}}</td><td>{{i.status}}</td><td>{{i.root_cause}}</td><td>{{i.corrective_action}}</td>
+<td>{% if i.signed_file_link %}<a href="{{ i.signed_file_link }}" target="_blank">Open signed file</a>{% else %}-{% endif %}</td>
+<td><form method="post" action="/ncr/{{ i.id }}/delete" onsubmit="return confirm('Delete this NCR?');"><button class="btn btn-sm btn-danger">Delete</button></form></td>
+</tr>{% endfor %}</table></div>
+{% endblock %}

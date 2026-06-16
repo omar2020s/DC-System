@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}MAR Log{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <a class="btn btn-success" href="/export/mar">Export Excel</a>
+  <form class="d-flex" method="get">
+    <input class="form-control me-2" name="q" value="{{ q or '' }}" placeholder="Search MAR No / Material / Supplier / Status">
+    <button class="btn btn-outline-primary">Search</button>
+    {% if q %}<a class="btn btn-outline-secondary ms-2" href="/mar">Clear</a>{% endif %}
+  </form>
+</div>
+<div class="card p-3 mb-3">
+  <form method="post">
+    <div class="row g-2">
+      <div class="col-md"><input class="form-control" name="mar_no" placeholder="MAR No" required></div>
+      <div class="col-md"><input class="form-control" name="material" placeholder="Material" required></div>
+      <div class="col-md"><input class="form-control" name="supplier" placeholder="Supplier"></div>
+      <div class="col-md"><input class="form-control" name="discipline" value="Civil"></div>
+      <div class="col-md"><select class="form-select" name="status"><option>Submitted</option><option>Under Review</option><option>Approved</option><option>Rejected</option></select></div>
+    </div>
+    <input class="form-control mt-2" name="signed_file_link" placeholder="Hyperlink for signed file after approval/signature">
+    <textarea class="form-control mt-2" name="remarks" placeholder="Remarks"></textarea>
+    <button class="btn btn-primary mt-2">Add MAR</button>
+  </form>
+</div>
+<div class="card"><table class="table table-hover mb-0">
+<tr><th>MAR No</th><th>Material</th><th>Supplier</th><th>Discipline</th><th>Status</th><th>Signed File</th><th>Remarks</th><th>Action</th></tr>
+{% for i in items %}<tr>
+<td>{{i.mar_no}}</td><td>{{i.material}}</td><td>{{i.supplier}}</td><td>{{i.discipline}}</td><td>{{i.status}}</td>
+<td>{% if i.signed_file_link %}<a href="{{ i.signed_file_link }}" target="_blank">Open signed file</a>{% else %}-{% endif %}</td>
+<td>{{i.remarks}}</td>
+<td><form method="post" action="/mar/{{ i.id }}/delete" onsubmit="return confirm('Delete this MAR?');"><button class="btn btn-sm btn-danger">Delete</button></form></td>
+</tr>{% endfor %}</table></div>
+{% endblock %}
